@@ -128,6 +128,7 @@ handle_args(["-" ++ Option | Rest], Config) ->
               print_depth => integer,
               print_re => string,
               print_return => boolean,
+              print_fun => function,
               %% trc file-related
               file => string,
               file_size => integer,
@@ -203,6 +204,12 @@ to_option_value(atom, String) ->
   list_to_atom(String);
 to_option_value(term, String) ->
   to_term(String);
+to_option_value(function, String) ->
+  [MS, FS, AS] = string:tokens(String, ":/"),
+  M = list_to_atom(MS),
+  F = list_to_atom(FS),
+  A = list_to_integer(AS),
+  fun M:F/A;
 to_option_value(boolean, String) ->
   case String of
     "true" -> true;
